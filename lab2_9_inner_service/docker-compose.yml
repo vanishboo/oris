@@ -1,0 +1,25 @@
+services:
+  nats:
+    image: nats:2.10-alpine
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: [ "-m", "8222" ]
+
+  imgservice-nats:
+    build:
+      context: ./imgservice
+      dockerfile: Dockerfile
+    container_name: imgservice-nats
+    depends_on:
+      - nats
+    environment:
+      NATS_URL: nats://nats:4222
+
+  imgservice-http:
+    build:
+      context: ./imgservice
+      dockerfile: Dockerfile.http
+    container_name: imgservice-http
+    ports:
+      - "5000:5000"
